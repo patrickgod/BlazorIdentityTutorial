@@ -1,4 +1,7 @@
 ﻿@page "/"
+@using BlazorIdentityTutorial.Shared
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +10,14 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
+        if (user != null && user.IsAuthenticated)
+        {
+            var heroes = await Http.GetFromJsonAsync<List<SuperHero>>("api/superhero");
+        }
+    }
+}
